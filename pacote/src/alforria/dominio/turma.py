@@ -42,7 +42,7 @@ class Turma:
 
     def __str__(self):
         p = self.professor
-        id_professor = p.id if p is not None else "Sem professor"
+        id_professor = p.matricula if p is not None else "Sem professor"
         horarios_str = [f"({h[0]:d}, {h[1]:d})" for h in self.horarios]
 
         return f"{self.id} {id_professor} CH: {self.ch} {horarios_str}"
@@ -60,9 +60,9 @@ class Turma:
         self.professor = p
         p.add_course(self)
 
-    def remove_professor(self, p: Professor):
+    def remove_professor(self):
         """Remove the relation with professor 'p'."""
-        if self.professor is None:
+        if (p := self.professor) is None:
             return
 
         self.professor = None

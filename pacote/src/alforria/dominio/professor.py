@@ -12,6 +12,7 @@ class Professor:
     def __init__(self, *, matricula: str, nome_completo: str, temporario: bool = False):
         self.matricula = matricula  # id único do professor (chave primária)
         self.nome_completo = nome_completo
+
         self.email = None
         self.tel = None
         self.chprevia1 = 0.0
@@ -77,7 +78,7 @@ class Professor:
         if t not in self.turmas_a_lecionar:
             return
         self.turmas_a_lecionar.remove(t)
-        t.remove_professor(self)
+        t.remove_professor()
 
     def carga_horaria_atrib(self):
         ch = 0
@@ -99,36 +100,23 @@ class Professor:
 
         return ch
 
-    def carga_horaria_s1(self):
+    def carga_horaria_s1(self) -> float:
         return self.chprevia1 + self._carga_horaria_s(1)
 
-    def carga_horaria_s2(self):
+    def carga_horaria_s2(self) -> float:
         return self.chprevia2 + self._carga_horaria_s(2)
 
-    def carga_horaria_total(self):
+    def carga_horaria_total(self) -> float:
         return self.chprevia1 + self.chprevia2 + self.carga_horaria_atrib()
 
-    @property
-    def id(self):
-        # O certo sera return self.matricula, mas ainda nao funciona
-        return self.matricula
-
-    def nome(self):
-        tok = self.nome_completo.split()
-        n = ""
-        for palavra in tok:
-            if len(palavra) != 0:
-                if n != "":
-                    n += "_" + palavra
-                else:
-                    n += palavra
-        return n
+    def nome(self) -> str:
+        return self.nome_completo.replace(" ", "_")
 
     def __eq__(self, p):
-        return True if (self.id() == p.id()) else False
+        return self.matricula == p.matricula
 
     def __hash__(self):
-        return hash(self.id())
+        return hash(self.matricula)
 
     def __str__(self):
         s = (
@@ -245,3 +233,14 @@ class Professor:
                 self.pref_grupos[g] = (
                     -10 * (self.pref_grupos_bruto[g] - maximo) / (maximo - minimo)
                 )
+
+    def display(self) -> str:
+        s = self.nome() + (" P" if self.pos else "")
+        s += (
+            f" (Ch. previa: {int(self.chprevia1)} (1S) {int(self.chprevia2)} (2S), "
+            f"Ch. total: {int(self.carga_horaria_s1())} (1S) "
+            f"{int(self.carga_horaria_s2())} (2S))"
+        )
+        for t in self.turmas_a_lecionar:
+            s += f"\n {t}"
+        return s + "\n"
