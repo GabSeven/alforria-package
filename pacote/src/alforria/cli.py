@@ -339,7 +339,7 @@ def _load_():
 
     if _session is not None:
         _session.completer = merge_completers(
-            [_session.completer, WordCompleter(list(t.id() for t in turmas))]
+            [_session.completer, WordCompleter(list(t.id for t in turmas))]
         )
 
     for t in turmas:
@@ -351,13 +351,13 @@ def _load_():
                 _hd_course_search[(d, h, t.semestralidade)] = {t}
 
     _course_professor_search = {
-        t.id(): {p for p in professores if p.can_teach(t)} for t in turmas
+        t.id: {p for p in professores if p.can_teach(t)} for t in turmas
     }
 
     # Cria uma lista de busca de turmas por id
     # (NOME_TURMA_SEMESTRALIDADE) para agilizar as buscas
 
-    _course_search_id = {t.id(): t for t in turmas}
+    _course_search_id = {t.id: t for t in turmas}
 
     # Carrega o arquivo de disciplinas pre-atribuidas
     pre_atribuidas = leitura.ler_pre_atribuidas(
@@ -474,13 +474,13 @@ def _attribute_t_to_p(t, p):
 
     # if t.vinculada and t.semestralidade == 2:
 
-    #     logger.error("Nao permitido atribuir parte de disciplina anual %s -> %s.", (t.id(), p.nome()))
+    #     logger.error("Nao permitido atribuir parte de disciplina anual %s -> %s.", (t.id, p.nome()))
 
     #     return
 
     if t.professor is not None:
         if t.professor != p:
-            logger.error(f"Turma {t.id()} ja atribuida a {t.professor.nome()}.")
+            logger.error(f"Turma {t.id} ja atribuida1 a {t.professor.nome()}.")
 
         return
 
@@ -494,7 +494,7 @@ def _attribute_t_to_p(t, p):
 
     # if t.vinculada and t.semestralidade == 1:
 
-    #     cvinc = (t.id()).replace("S1", "S2")
+    #     cvinc = (t.id).replace("S1", "S2")
 
     #     if cvinc not in _course_search_id:
 
@@ -547,12 +547,12 @@ def _remove_from_(t, p):
 
     """
 
-    t.remove_professor(p)
+    t.remove_professor()
 
     p.remove_course(t)
 
     if t.vinculada and t.semestralidade == 1:
-        cvinc = (t.id()).replace("S1", "S2")
+        cvinc = (t.id).replace("S1", "S2")
 
         logger.warn(f"Atencao. Verifique se professor ministra {cvinc}")
 
@@ -682,7 +682,7 @@ def _to_pdf_():
 
         escrita.cria_relatorio_geral(prof_ord, RELDIR)
 
-        escrita.escreve_pre_atribuidas(%
+        escrita.escreve_pre_atribuidas(
             professores, turmas, RELDIR + "pre_atribuidas.tsv"
         )
 
@@ -734,7 +734,7 @@ def _check_(*args):
         clist = [_course_search_id[c] for c in cour if c in _course_search_id]
 
         clist2 = [
-            _course_search_id[(c.id()).replace("S1", "S2")]
+            _course_search_id[(c.id).replace("S1", "S2")]
             for c in clist
             if (c.vinculada and c.semestralidade == 1)
         ]
@@ -778,7 +778,7 @@ def _find_(*args):
 
     # Deal with annual courses
     if t.vinculada and t.semestralidade == 1:
-        name2 = (t.id()).replace("S1", "S2")
+        name2 = (t.id).replace("S1", "S2")
 
         s = s.intersection(_course_professor_search[name2])
 

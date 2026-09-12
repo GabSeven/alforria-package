@@ -80,7 +80,7 @@ def caca_fantasmas(arquivo, turmas):
                 if int(turmas[i].codigo) == int(fantasma[0]) and int(
                     turmas[i].turma
                 ) == int(fantasma[1]):
-                    print("Turma " + turmas[i].id() + " removida")
+                    print("Turma " + turmas[i].id + " removida")
                     del turmas[i]
                     fantasma_inexistente = False
                 else:
@@ -119,7 +119,7 @@ def ler_solucao_gurobi_jump(professores, turmas, arquivo):
                 turmaid = b[1].strip("'")
                 if float(a[-1].strip()) > 0.9:
                     for t in turmas:
-                        if t.id() == turmaid:
+                        if t.id == turmaid:
                             break
                     for p in professores:
                         if p.nome() == professor:
@@ -183,7 +183,7 @@ def ler_solucao(professores, turmas, arquivo):
                 turmaid = b[1].strip("'")
                 if float(a[-1].strip()) > 0.9:
                     for t in turmas:
-                        if t.id() == turmaid:
+                        if t.id == turmaid:
                             break
                     for p in professores:
                         if p.nome() == professor:
@@ -245,7 +245,7 @@ def ler_solucao_jl(professores, turmas, arquivo):
             variavel = a[0]
 
             idx_p = {p.nome(): p for p in professores}
-            idx_t = {t.id(): t for t in turmas}
+            idx_t = {t.id: t for t in turmas}
 
             p = idx_p[professor]
 
@@ -310,7 +310,7 @@ def ler_solucao_cbc(professores, turmas, arquivo):
                 turmaid = b[1].strip("'")
                 if linha.split()[-2] == "1":
                     for t in turmas:
-                        if t.id() == turmaid:
+                        if t.id == turmaid:
                             break
                     for p in professores:
                         if p.nome() == professor:
@@ -637,7 +637,7 @@ def ler_sar(
                     t.curso = cursos[t.codigo]
 
                 else:
-                    print("AVISO: Disciplina {} sem curso.".format(t.id()))
+                    print("AVISO: Disciplina {} sem curso.".format(t.id))
 
             else:
                 if sar_vale(linha) and not invalida:
@@ -1012,13 +1012,15 @@ def ler_pre_atribuidas(arquivo, arquivo_de_fantasmas, professores, turmas):
 #########################################                LER AQUIVO DE CONFIGURACAO         ################################
 ############################################################################################################################
 
+
 class TomlConfig(TypedDict):
     path: dict
     alforria: dict
     constantes: dict
     julia: dict
-    
-def ler_conf(fileName = "config.toml") -> TomlConfig:
+
+
+def ler_conf(fileName="config.toml") -> TomlConfig:
     """
     Le o arquivo de configuracao e devolve um mapa {PARAMETRO:VALOR}com os parametros lidos
     """

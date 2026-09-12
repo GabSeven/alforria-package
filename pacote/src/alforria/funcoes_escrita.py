@@ -7,7 +7,8 @@ import pandas as pd
 
 from . import funcoes_leitura as leitura
 
-logger = logging.getLogger('alforria')
+logger = logging.getLogger("alforria")
+
 
 def gera_declaracao_ch_semestre(
     listah, s, dirh="/home/fsobral/GoogleDrive/Alforria/2024/horarios"
@@ -137,7 +138,7 @@ def cria_relatorio_geral(professores, diretorio):
     para carregar os pacotes e similares.
     """
     path = leitura.ler_conf()["path"]
-    
+
     if not os.path.exists(diretorio):
         os.makedirs(diretorio)
 
@@ -178,24 +179,24 @@ def escreve_dat(professores, turmas, grupos, pre_atribuidas, arquivo):
 
         f.write("set T := ")
         for t in turmas:
-            f.write(t.id() + " ")
+            f.write(t.id + " ")
         f.write(";\n\n")
 
         f.write("set T_PRE := ")
         for p, t in pre_atribuidas:
-            f.write(t.id() + " ")
+            f.write(t.id + " ")
         f.write(";\n\n")
 
         f.write("set P := ")
         for p in professores:
-            f.write(p.id() + " ")
+            f.write(p.matricula + " ")
         f.write(";\n\n")
 
         # Vincula as turmas ao grupos
         f.write("param turma_grupo := \n")
         for t in turmas:
             if t.grupo is not None:
-                f.write(t.id() + " " + t.grupo.id + " 1\n")
+                f.write(t.id + " " + t.grupo.id + " 1\n")
         f.write(";\n\n")
 
         # Supoe que se uma disciplina eh vinculada, seu vinculo eh a
@@ -204,10 +205,10 @@ def escreve_dat(professores, turmas, grupos, pre_atribuidas, arquivo):
         vinc = False
         for t in turmas:
             if vinc:
-                f.write(t.id() + " 1\n")
+                f.write(t.id + " 1\n")
                 vinc = False
             elif t.vinculada:
-                f.write(t.id() + " ")
+                f.write(t.id + " ")
                 vinc = True
         f.write(";\n\n")
 
@@ -215,7 +216,7 @@ def escreve_dat(professores, turmas, grupos, pre_atribuidas, arquivo):
         for t in turmas:
             for d, h in t.horarios:
                 f.write(
-                    t.id()
+                    t.id
                     + " "
                     + str(t.semestralidade)
                     + " "
@@ -228,12 +229,12 @@ def escreve_dat(professores, turmas, grupos, pre_atribuidas, arquivo):
 
         f.write("param ch := \n")
         for t in turmas:
-            f.write(t.id() + " " + str(t.carga_horaria()) + "\n")
+            f.write(t.id + " " + str(t.carga_horaria()) + "\n")
         f.write(";\n\n")
 
         f.write("param ch1 := \n")
         for t in turmas:
-            f.write(t.id() + " ")
+            f.write(t.id + " ")
             if t.semestralidade == 1:
                 f.write(str(t.carga_horaria()) + "\n")
             else:
@@ -242,7 +243,7 @@ def escreve_dat(professores, turmas, grupos, pre_atribuidas, arquivo):
 
         f.write("param ch2 := \n")
         for t in turmas:
-            f.write(t.id() + " ")
+            f.write(t.id + " ")
             if t.semestralidade == 2:
                 f.write(str(t.carga_horaria()) + "\n")
             else:
@@ -252,13 +253,13 @@ def escreve_dat(professores, turmas, grupos, pre_atribuidas, arquivo):
         f.write("param temporario := \n")
         for p in professores:
             if p.temporario:
-                f.write(p.id() + " 1\n")
+                f.write(p.matricula + " 1\n")
         f.write(";\n\n")
 
         f.write("param inapto := \n")
         for p in professores:
             for g in p.inapto:
-                f.write(p.id() + " " + g + " 1\n")
+                f.write(p.matricula + " " + g + " 1\n")
         f.write(";\n\n")
 
         f.write("param impedimento := \n")
@@ -268,7 +269,7 @@ def escreve_dat(professores, turmas, grupos, pre_atribuidas, arquivo):
                     if p.impedimentos[h][d]:
                         for s in range(1, 3):
                             f.write(
-                                p.id()
+                                p.matricula
                                 + " "
                                 + str(s)
                                 + " "
@@ -282,13 +283,13 @@ def escreve_dat(professores, turmas, grupos, pre_atribuidas, arquivo):
         f.write("param pref_janelas := \n")
         for p in professores:
             if p.pref_janelas:
-                f.write(p.id() + " 1\n")
+                f.write(p.matricula + " 1\n")
         f.write(";\n\n")
 
         f.write("param pref_grupo := \n")
         for p in professores:
             for g in p.pref_grupos.keys():
-                f.write(p.id() + " " + g + " " + str(p.pref_grupos[g]) + "\n")
+                f.write(p.matricula + " " + g + " " + str(p.pref_grupos[g]) + "\n")
         f.write(";\n\n")
 
         f.write("param pref_hor := \n")
@@ -296,7 +297,7 @@ def escreve_dat(professores, turmas, grupos, pre_atribuidas, arquivo):
             for d in range(2, 8):
                 for h in range(1, 17):
                     f.write(
-                        p.id()
+                        p.matricula
                         + " "
                         + str(d)
                         + " "
@@ -309,84 +310,85 @@ def escreve_dat(professores, turmas, grupos, pre_atribuidas, arquivo):
 
         f.write("param pre_atribuida :=\n")
         for p, t in pre_atribuidas:
-            f.write(p.id() + " " + t.id() + " 1\n")
+            f.write(p.matricula + " " + t.id + " 1\n")
         f.write(";\n\n")
 
         f.write("param chprevia1 :=\n")
         for p in professores:
             if p.chprevia1 > 0:
-                f.write(p.id() + " " + str(p.chprevia1) + "\n")
+                f.write(p.matricula + " " + str(p.chprevia1) + "\n")
         f.write(";\n\n")
 
         f.write("param chprevia2 :=\n")
         for p in professores:
             if p.chprevia2 > 0:
-                f.write(p.id() + " " + str(p.chprevia2) + "\n")
+                f.write(p.matricula + " " + str(p.chprevia2) + "\n")
         f.write(";\n\n")
 
         f.write("param licenca :=\n")
         for p in professores:
             if p.licenca1:
-                f.write(p.id() + " 1 1\n")
+                f.write(p.matricula + " 1 1\n")
             if p.licenca2:
-                f.write(p.id() + " 2 1\n")
+                f.write(p.matriculaicula + " 2 1\n")
         f.write(";\n\n")
 
         f.write("param peso_disciplinas := \n")
         for p in professores:
-            f.write(p.id() + " " + str(p.peso_disciplinas) + "\n")
+            f.write(p.matriculaicula + " " + str(p.peso_disciplinas) + "\n")
         f.write(";\n\n")
 
         f.write("param peso_horario := \n")
         for p in professores:
-            f.write(p.id() + " " + str(p.peso_horario) + "\n")
+            f.write(p.matricula + " " + str(p.peso_horario) + "\n")
         f.write(";\n\n")
 
         f.write("param peso_cargahor := \n")
         for p in professores:
-            f.write(p.id() + " " + str(p.peso_cargahor) + "\n")
+            f.write(p.matricula + " " + str(p.peso_cargahor) + "\n")
         f.write(";\n\n")
 
         f.write("param peso_distintas := \n")
         for p in professores:
-            f.write(p.id() + " " + str(p.peso_distintas) + "\n")
+            f.write(p.matricula + " " + str(p.peso_distintas) + "\n")
         f.write(";\n\n")
 
         f.write("param peso_janelas := \n")
         for p in professores:
-            f.write(p.id() + " " + str(p.peso_janelas) + "\n")
+            f.write(p.matricula + " " + str(p.peso_janelas) + "\n")
         f.write(";\n\n")
 
         f.write("param peso_numdisc := \n")
         for p in professores:
-            f.write(p.id() + " " + str(p.peso_numdisc) + "\n")
+            f.write(p.matricula + " " + str(p.peso_numdisc) + "\n")
         f.write(";\n\n")
 
         f.write("param peso_manha_noite := \n")
         for p in professores:
-            f.write(p.id() + " " + str(p.peso_manha_noite) + "\n")
+            f.write(p.matricula + " " + str(p.peso_manha_noite) + "\n")
         f.write(";\n\n")
 
         f.write("param chmax := \n")
         for p in professores:
             if p.chmax != None:
-                f.write(p.id() + " " + str(p.chmax) + "\n")
+                f.write(p.matricula + " " + str(p.chmax) + "\n")
         f.write(";\n\n")
 
         f.write("param chmax1 := \n")
         for p in professores:
             if p.chmax1 != None:
-                f.write(p.id() + " " + str(p.chmax1) + "\n")
+                f.write(p.matricula + " " + str(p.chmax1) + "\n")
         f.write(";\n\n")
 
         f.write("param chmax2 := \n")
         for p in professores:
             if p.chmax2 != None:
-                f.write(p.id() + " " + str(p.chmax2) + "\n")
+                f.write(p.matricula + " " + str(p.chmax2) + "\n")
         f.write(";\n\nend;\n")
 
         f.write("set P_OUT :=")
         f.write(" ;\n\n")
+
 
 ####################################################################################################################
 ####################                  Funcao              escreve atribuicoes              #########################
@@ -401,7 +403,6 @@ def escreve_pre_atribuidas(professores, turmas, arquivo):
     with open(arquivo, "w") as f:
         for p in professores:
             for t in p.turmas_a_lecionar:
-                # TODO: trocar p.matricula por p.id()
                 sem = "S" + str(t.semestralidade)
 
                 f.write(
@@ -431,7 +432,6 @@ def escreve_atribuicoes(professores, turmas, arquivo):
                 if int(t.codigo) >= 60000 and int(t.codigo) < 70000:
                     continue
 
-                # TODO: trocar p.matricula por p.id()
                 sem = "S" + str(t.semestralidade)
                 # Agora permitimos disciplinas anuais desvinculadas
                 # if t.vinculada and t.semestralidade == 1:
@@ -453,7 +453,7 @@ def escreve_atribuicoes(professores, turmas, arquivo):
                 # f.write(str(p.matricula) + '\t' + p.nome() + '\t' + str(t.codigo) + '\t' + \
                 #         str(t.turma) + '\t' + t.nome + '\t' + str(t.carga_horaria()) + \
                 #         '\t' + sem + '\n')
-                # TODO: trocar p.matricula por p.id()
+
                 # for fant in t.turmas_clientes:
                 #     f.write(str(p.matricula) + '\t' + p.nome() + '\t' + str(fant.codigo) + '\t' + \
                 #             str(fant.turma) + '\t' + fant.nome + '\t' + str(fant.carga_horaria()) + \
@@ -511,7 +511,6 @@ def atualiza_dat2(professores, arquivo):
     # Leitura dos professores ja excluidos
 
     try:
-
         with open(arquivo, "r") as f:
             l = f.readline().split()
 
@@ -522,7 +521,6 @@ def atualiza_dat2(professores, arquivo):
                             listap.append(p)
 
     except FileNotFoundError:
-
         logger.debug("\tatualiza_jl: file not found.")
 
     professores.sort(key=lambda x: x.insatisfacao, reverse=True)
@@ -573,7 +571,6 @@ def atualiza_jl(professores, arquivo):
     # P_OUT :: Set{String} = Set([ "T1", "T2", ..., "TN"])
 
     try:
-
         with open(arquivo, "r") as f:
             l = f.readline()
 
@@ -586,11 +583,9 @@ def atualiza_jl(professores, arquivo):
                     if p.nome() == nome:
                         listap.append(p)
                         break
-    
+
     except FileNotFoundError:
-
         logger.debug("\tatualiza_jl: file not found.")
-
 
     professores.sort(key=lambda x: x.insatisfacao, reverse=True)
 
@@ -622,18 +617,23 @@ def atualiza_jl(professores, arquivo):
         f.write("ub_insat :: Dict{String, Float64} = Dict(\n")
 
         for p in listap[0:-1]:
-
-            f.write('\t"{0:s} => {1:3.5f},\n'.format(p.nome(), max(maxinsat, p.insatisfacao)))
+            f.write(
+                '\t"{0:s} => {1:3.5f},\n'.format(
+                    p.nome(), max(maxinsat, p.insatisfacao)
+                )
+            )
 
         else:
-
             p = listap[-1]
-            f.write('\t"{0:s} => {1:3.5f}\n'.format(p.nome(), max(maxinsat, p.insatisfacao)))
+            f.write(
+                '\t"{0:s} => {1:3.5f}\n'.format(p.nome(), max(maxinsat, p.insatisfacao))
+            )
 
         f.write(")\n")
 
     # Antes de sair, ordena os professores por nome
     professores.sort(key=lambda x: x.nome())
+
 
 ####################################################################################################################
 ####################                  Funcao              escreve jl                       #########################
@@ -643,38 +643,38 @@ def atualiza_jl(professores, arquivo):
 def escreve_jl(professores, turmas, grupos, pre_atribuidas, arquivo):
     with open(arquivo, "w") as f:
         constantes = leitura.ler_conf()["constantes"]
-    
+
         for param in constantes:
             f.write(f"param = {constantes[param]}\n\n")
 
         f.write("G :: Set{String} = Set{String}([\n\n")
         for g in grupos:
             f.write(f'\t"{g.id}",\n')
- 
+
         f.write("\n])\n\n")
 
         f.write("G_CANONICOS :: Set{String} = Set{String}([")
         for g in grupos:
             if g.canonico:
                 f.write(f'\t"{g.id}",\n')
- 
+
         f.write("\n])\n\n")
 
         f.write("T :: Set{String} = Set{String}([")
         for t in turmas:
-            f.write(f'\t"{t.id()}",\n')
- 
+            f.write(f'\t"{t.id}",\n')
+
         f.write("\n])\n\n")
 
         f.write("T_PRE :: Set{String} = Set{String}([")
         for p, t in pre_atribuidas:
-            f.write(f'\t"{t.id()}",\n')
+            f.write(f'\t"{t.id}",\n')
 
         f.write("\n])\n\n")
 
         f.write("P :: Set{String} = Set{String}([")
         for p in professores:
-            f.write(f'\t"{p.id()}",\n')
+            f.write(f'\t"{p.matricula}",\n')
 
         f.write("\n])\n\n")
 
@@ -682,7 +682,7 @@ def escreve_jl(professores, turmas, grupos, pre_atribuidas, arquivo):
         f.write("turma_grupo :: Dict{String, String} = Dict(\n")
         for t in turmas:
             if t.grupo is not None:
-                f.write(f'\t"{t.id()}" => "{t.grupo.id}",\n')
+                f.write(f'\t"{t.id}" => "{t.grupo.id}",\n')
 
         f.write("\n)\n\n")
 
@@ -694,10 +694,10 @@ def escreve_jl(professores, turmas, grupos, pre_atribuidas, arquivo):
         vinc = False
         for t in turmas:
             if vinc:
-                f.write(f'"{t.id()}"),\n')
+                f.write(f'"{t.id}"),\n')
                 vinc = False
             elif t.vinculada:
-                f.write(f'\t("{t.id()}", ')
+                f.write(f'\t("{t.id}", ')
                 vinc = True
 
         f.write("\n])\n\n")
@@ -706,19 +706,19 @@ def escreve_jl(professores, turmas, grupos, pre_atribuidas, arquivo):
         f.write("Set{Tuple{String, Int64, Int64, Int64}}([")
         for t in turmas:
             for d, h in t.horarios:
-                f.write(f'\t("{t.id()}", {t.semestralidade}, {d}, {h}),\n')
+                f.write(f'\t("{t.id}", {t.semestralidade}, {d}, {h}),\n')
 
         f.write("\n])\n\n")
 
         f.write("ch :: Dict{String, Int64} = Dict{String, Int64}(\n")
         for t in turmas:
-            f.write(f'\t"{t.id()}" => {t.carga_horaria()},\n')
+            f.write(f'\t"{t.id}" => {t.carga_horaria()},\n')
 
         f.write("\n)\n\n")
 
         f.write("ch1 :: Dict{String, Int64} = Dict{String, Int64}(\n")
         for t in turmas:
-            f.write(f'\t"{t.id()}" => ')
+            f.write(f'\t"{t.id}" => ')
             if t.semestralidade == 1:
                 f.write(f"{t.carga_horaria()},\n")
             else:
@@ -728,7 +728,7 @@ def escreve_jl(professores, turmas, grupos, pre_atribuidas, arquivo):
 
         f.write("ch2 :: Dict{String, Int64} = Dict{String, Int64}(\n")
         for t in turmas:
-            f.write(f'\t"{t.id()}" => ')
+            f.write(f'\t"{t.id}" => ')
             if t.semestralidade == 2:
                 f.write(f"{t.carga_horaria()},\n")
             else:
@@ -739,14 +739,14 @@ def escreve_jl(professores, turmas, grupos, pre_atribuidas, arquivo):
         f.write("temporario :: Set{String} = Set{String}([\n")
         for p in professores:
             if p.temporario:
-                f.write(f'\t"{p.id()}",\n')
+                f.write(f'\t"{p.matricula}",\n')
 
         f.write("\n])\n\n")
 
         f.write("inapto :: Set{Tuple{String, String}} = Set{Tuple{String, String}}([\n")
         for p in professores:
             for g in p.inapto:
-                f.write(f'\t("{p.id()}", "{g}")\n')
+                f.write(f'\t("{p.matricula}", "{g}")\n')
         f.seek(f.tell() - 1, 0)
         f.write("\n])\n\n")
 
@@ -757,14 +757,14 @@ def escreve_jl(professores, turmas, grupos, pre_atribuidas, arquivo):
                 for h in range(1, 17):
                     if p.impedimentos[h][d]:
                         for s in range(1, 3):
-                            f.write(f'\t("{p.id()}", {s}, {d}, {h})\n')
+                            f.write(f'\t("{p.matricula}", {s}, {d}, {h})\n')
         f.seek(f.tell() - 1, 0)
         f.write("\n])\n\n")
 
         f.write("pref_janelas :: Set{String} = Set{String}([\n")
         for p in professores:
             if p.pref_janelas:
-                f.write(f'\t"{p.id()}",\n')
+                f.write(f'\t"{p.matricula}",\n')
 
         f.write("\n])\n\n")
 
@@ -772,7 +772,7 @@ def escreve_jl(professores, turmas, grupos, pre_atribuidas, arquivo):
         f.write("Dict{Tuple{String, String}, Float64}(\n")
         for p in professores:
             for g in p.pref_grupos.keys():
-                f.write(f'\t("{p.id()}", "{g}") => {p.pref_grupos[g]},\n')
+                f.write(f'\t("{p.matricula}", "{g}") => {p.pref_grupos[g]},\n')
 
         f.write("\n)\n\n")
 
@@ -781,109 +781,119 @@ def escreve_jl(professores, turmas, grupos, pre_atribuidas, arquivo):
         for p in professores:
             for d in range(2, 8):
                 for h in range(1, 17):
-                    f.write(f'\t("{p.id()}", {d}, {h}) => {p.pref_horarios[h, d]},\n')
+                    f.write(
+                        f'\t("{p.matricula}", {d}, {h}) => {p.pref_horarios[h, d]},\n'
+                    )
 
         f.write("\n)\n\n")
 
         f.write("pre_atribuida :: Set{Tuple{String, String}} =\n")
         f.write("Set{Tuple{String, String}}([\n")
         for p, t in pre_atribuidas:
-            f.write(f'\t("{p.id()}", "{t.id()}"),\n')
+            f.write(f'\t("{p.matricula}", "{t.id}"),\n')
 
         f.write("\n])\n\n")
 
         f.write("chprevia1 :: Dict{String, Int64} = Dict{String, Int64}(\n")
         for p in professores:
             if p.chprevia1 > 0:
-                f.write(f'\t"{p.id()}" => {p.chprevia1},\n')
+                f.write(f'\t"{p.matricula}" => {p.chprevia1},\n')
 
         f.write("\n)\n\n")
 
         f.write("chprevia2 :: Dict{String, Int64} = Dict{String, Int64}(\n")
         for p in professores:
             if p.chprevia2 > 0:
-                f.write(f'\t"{p.id()}" => {p.chprevia2},\n')
+                f.write(f'\t"{p.matricula}" => {p.chprevia2},\n')
 
         f.write("\n)\n\n")
 
         f.write("licenca :: Set{Tuple{String, Int64}} = Set{Tuple{String, Int64}}([\n")
         for p in professores:
             if p.licenca1:
-                f.write(f'\t("{p.id()}", 1)\n')
+                f.write(f'\t("{p.matricula}", 1)\n')
             if p.licenca2:
-                f.write(f'\t("{p.id()}", 2)\n')
+                f.write(f'\t("{p.matricula}", 2)\n')
         f.seek(f.tell() - 1, 0)
         f.write("\n])\n\n")
 
         f.write("peso_disciplinas :: Dict{String, Float64} = Dict{String, Float64}(\n")
         for p in professores:
-            f.write(f'\t"{p.id()}" => {p.peso_disciplinas},\n')
+            f.write(f'\t"{p.matricula}" => {p.peso_disciplinas},\n')
 
         f.write("\n)\n\n")
 
         f.write("peso_horario  :: Dict{String, Float64} = Dict{String, Float64}(\n")
         for p in professores:
-            f.write(f'\t"{p.id()}" => {p.peso_horario},\n')
+            f.write(f'\t"{p.matricula}" => {p.peso_horario},\n')
 
         f.write("\n)\n\n")
 
         f.write("peso_cargahor :: Dict{String, Float64} = Dict{String, Float64}(\n")
         for p in professores:
-            f.write(f'\t"{p.id()}" => {p.peso_cargahor},\n')
+            f.write(f'\t"{p.matricula}" => {p.peso_cargahor},\n')
 
         f.write("\n)\n\n")
 
         f.write("peso_distintas :: Dict{String, Float64} = Dict{String, Float64}(\n")
         for p in professores:
-            f.write(f'\t"{p.id()}" => {p.peso_distintas},\n')
+            f.write(f'\t"{p.matricula}" => {p.peso_distintas},\n')
 
         f.write("\n)\n\n")
 
         f.write("peso_janelas :: Dict{String, Float64} = Dict{String, Float64}(\n")
         for p in professores:
-            f.write(f'\t"{p.id()}" => {p.peso_janelas},\n')
+            f.write(f'\t"{p.matricula}" => {p.peso_janelas},\n')
 
         f.write("\n)\n\n")
 
         f.write("peso_numdisc :: Dict{String, Float64} = Dict{String, Float64}(\n")
         for p in professores:
-            f.write(f'\t"{p.id()}" => {p.peso_numdisc},\n')
+            f.write(f'\t"{p.matricula}" => {p.peso_numdisc},\n')
 
         f.write("\n)\n\n")
 
         f.write("peso_manha_noite :: Dict{String, Float64} = Dict{String, Float64}(\n")
         for p in professores:
-            f.write(f'\t"{p.id()}" => {p.peso_manha_noite},\n')
+            f.write(f'\t"{p.matricula}" => {p.peso_manha_noite},\n')
 
         f.write("\n)\n\n")
 
         f.write("chmax :: Dict{String, Int64} = Dict{String, Int64}(\n")
         for p in professores:
             if p.chmax != None:
-                f.write(f'\t"{p.id()}" => {p.chmax},\n')
+                f.write(f'\t"{p.matricula}" => {p.chmax},\n')
 
         f.write("\n)\n\n")
 
         f.write("chmax1 :: Dict{String, Int64} = Dict{String, Int64}(\n")
         for p in professores:
             if p.chmax1 != None:
-                f.write(f'\t"{p.id()}" => {p.chmax1},\n')
+                f.write(f'\t"{p.matricula}" => {p.chmax1},\n')
 
         f.write("\n)\n\n")
 
         f.write("chmax2 :: Dict{String, Int64} = Dict{String, Int64}(\n")
         for p in professores:
             if p.chmax2 != None:
-                f.write(f'\t"{p.id()}" => {p.chmax2},\n')
+                f.write(f'\t"{p.matricula}" => {p.chmax2},\n')
 
         f.write("\n)\n\n")
 
-        f.write("conjuntos = ConjuntosAlforria(P, T, 2:7, 1:16, 1:2, G, 1:3, G_CANONICOS, T_PRE, Set{String}())\n")
+        f.write(
+            "conjuntos = ConjuntosAlforria(P, T, 2:7, 1:16, 1:2, G, 1:3, G_CANONICOS, T_PRE, Set{String}())\n"
+        )
 
-        f.write("psar = ParametrosSAR(c, ch, ch1, ch2, Set{Tuple{String, String}}(), turma_grupo)\n")
+        f.write(
+            "psar = ParametrosSAR(c, ch, ch1, ch2, Set{Tuple{String, String}}(), turma_grupo)\n"
+        )
 
-        f.write("pform = ParametrosFormulario(temporario, chprevia1, chprevia2, licenca, pre_atribuida, inapto, pref_grupo, pref_hor, pref_janelas, impedimento, peso_disciplinas, peso_numdisc, peso_cargahor, peso_horario, peso_distintas, peso_manha_noite, peso_janelas, chmax, chmax1, chmax2, Dict())\n")
+        f.write(
+            "pform = ParametrosFormulario(temporario, chprevia1, chprevia2, licenca, pre_atribuida, inapto, pref_grupo, pref_hor, pref_janelas, impedimento, peso_disciplinas, peso_numdisc, peso_cargahor, peso_horario, peso_distintas, peso_manha_noite, peso_janelas, chmax, chmax1, chmax2, Dict())\n"
+        )
 
         f.write("pconf = defineParametrosConvencionados()\n")
 
-        f.write("opt = OptimizerOptions(7200.0, 0.6, \"alforria.sol\", 0, :fobj2, :Gurobi)\n")
+        f.write(
+            'opt = OptimizerOptions(7200.0, 0.6, "alforria.sol", 0, :fobj2, :Gurobi)\n'
+        )

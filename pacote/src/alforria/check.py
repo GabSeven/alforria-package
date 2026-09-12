@@ -26,7 +26,7 @@ def check_course_sem(cs, S1INI, S2INI, verbosity=True):
         ):
             logger.warn(
                 "Semestralidade incompatível: {0:12s}\t{1:d}\t{2:10s}".format(
-                    c.id(), c.semestralidade, date.isoformat(c.dini)
+                    c.id, c.semestralidade, date.isoformat(c.dini)
                 )
             )
 
@@ -101,7 +101,7 @@ def check_p_c(p, cs, params, verbosity=True):
                 logger.error(
                     "Professor %s - Disciplinas novas com horarios conflitantes: %s.",
                     p.nome(),
-                    c.id(),
+                    c.id,
                 )
 
                 ok = False
@@ -126,7 +126,7 @@ def check_p_c(p, cs, params, verbosity=True):
                 logger.warn(
                     "Professor %s com menos de 11h entre dias consecutivos: turma %s.",
                     p.nome(),
-                    c.id(),
+                    c.id,
                 )
 
                 ok = False
@@ -181,13 +181,13 @@ def check_p_c(p, cs, params, verbosity=True):
                 logger.error(
                     "Professor %s - nova disciplina conflita com ja atribuida %s",
                     p.nome(),
-                    t.id(),
+                    t.id,
                 )
 
                 ok = False
 
     logger.debug(
-        "%s carga total pre-atribuida com adicao de %s: %d.\n", p.nome(), c.id(), soma
+        "%s carga total pre-atribuida com adicao de %s: %d.\n", p.nome(), c.id, soma
     )
 
     if (
@@ -200,7 +200,7 @@ def check_p_c(p, cs, params, verbosity=True):
         or (not p.licenca2 and soma2 > chmaxsem)
     ):
         logger.error(
-            "Professor %s - adicao de %s excede carga horária máxima.", p.nome(), c.id()
+            "Professor %s - adicao de %s excede carga horária máxima.", p.nome(), c.id
         )
 
         ok = False
@@ -259,7 +259,7 @@ def check_p(p, params):
         for d, h in t.horarios:
             if (d, h, t.semestralidade) in l_horarios:
                 logger.error(
-                    "Erro professor %s: Disciplina conflitante %s", p.nome(), t.id()
+                    "Erro professor %s: Disciplina conflitante %s", p.nome(), t.id
                 )
 
                 ok = False
@@ -273,7 +273,7 @@ def check_p(p, params):
                     p.nome(),
                     d,
                     h,
-                    t.id(),
+                    t.id,
                 )
 
                 ok = False
@@ -282,7 +282,7 @@ def check_p(p, params):
             logger.error(
                 "\tProfessor %s com disciplina %s pre-atribuida e " + "com licenca.",
                 p.nome(),
-                t.id(),
+                t.id,
             )
 
             ok = False
@@ -291,7 +291,7 @@ def check_p(p, params):
             logger.error(
                 "\tProfessor %s com disciplina %s pre-atribuida e " + "com licenca.",
                 p.nome(),
-                t.id(),
+                t.id,
             )
 
             ok = False
@@ -302,7 +302,7 @@ def check_p(p, params):
                 + "disciplina pre-atribuida %s.",
                 p.nome(),
                 t.grupo.id,
-                t.id(),
+                t.id,
             )
 
             ok = False
@@ -328,7 +328,7 @@ def check_p(p, params):
                 logger.error(
                     "Professor %s com menos de 11h entre dias consecutivos: turma %s.",
                     p.nome(),
-                    t.id(),
+                    t.id,
                 )
 
                 ok = False
@@ -389,8 +389,8 @@ def ler_fantasmas(arquivo):
 def checkdata(professores, turmas, pre_atribuidas, S1INI, S2INI, FANTPATH):
     logger = logging.getLogger("alforria")
 
-    constantes = funcoes_leitura.ler_conf()['constantes']
-    
+    constantes = funcoes_leitura.ler_conf()["constantes"]
+
     fantasmas = ler_fantasmas(FANTPATH)
 
     # Verifica pre-atribuidas duplicadas
@@ -423,7 +423,7 @@ def checkdata(professores, turmas, pre_atribuidas, S1INI, S2INI, FANTPATH):
                     p.nome(),
                     d,
                     h,
-                    t.id(),
+                    t.id,
                 )
 
                 # p.impedimentos[h][d]=0
@@ -462,9 +462,9 @@ def checkdata(professores, turmas, pre_atribuidas, S1INI, S2INI, FANTPATH):
                     "AVISO: Professor "
                     + pi.nome()
                     + " com 2 disciplinas pre-atribuidas conflitantes: "
-                    + str(ti.id())
+                    + str(ti.id)
                     + " e "
-                    + str(tj.id())
+                    + str(tj.id)
                     + "."
                 )
 
@@ -491,7 +491,7 @@ def checkdata(professores, turmas, pre_atribuidas, S1INI, S2INI, FANTPATH):
                             ti.turmas_clientes.append(tj)
                             print(
                                 "\t"
-                                + str(turmas[k].id())
+                                + str(turmas[k].id)
                                 + " foi deletada e redefinida como fantasma."
                             )
                             del turmas[k]
@@ -517,11 +517,11 @@ def checkdata(professores, turmas, pre_atribuidas, S1INI, S2INI, FANTPATH):
                 del pre_atribuidas[j]
                 print(
                     "Mesma disciplina pre atribuida em duplicata: "
-                    + str(pre_atribuidas[i][1].id())
+                    + str(pre_atribuidas[i][1].id)
                     + " atribuida a "
-                    + str(pre_atribuidas[i][0].id())
+                    + str(pre_atribuidas[i][0].id)
                     + " e "
-                    + str(pre_atribuidas[i][1].id())
+                    + str(pre_atribuidas[i][1].id)
                     + ". Segunda associaçao removida."
                 )
             else:
@@ -580,13 +580,13 @@ def check_duplicadas(pre_atribuidas):
             if pre_atribuidas[i][1] == pre_atribuidas[j][1]:
                 print(
                     "AVISO: Disciplina "
-                    + str(pre_atribuidas[i][1].id())
+                    + str(pre_atribuidas[i][1].id)
                     + " pre-atribuida em duplicata a:\n"
                     + "\t"
-                    + str(pre_atribuidas[i][0].id())
+                    + str(pre_atribuidas[i][0].id)
                     + "\n"
                     + "\t"
-                    + str(pre_atribuidas[j][0].id())
+                    + str(pre_atribuidas[j][0].id)
                     + ".\nSegunda associaçao removida."
                 )
                 del pre_atribuidas[j]
@@ -675,7 +675,7 @@ def check_ch(professores, turmas, pre_atribuidas, constantes):
 
                 pre_atribuidas.remove((p1, t1))
 
-                logger.info("\tRemovida turma %s", t1.id())
+                logger.info("\tRemovida turma %s", t1.id)
 
             continue
 
@@ -751,7 +751,7 @@ def check_nao_atribuidas(turmas):
 
     for t in turmas:
         if t.professor is None:
-            logger.warning("\t%15s sem professor", t.id())
+            logger.warning("\t%15s sem professor", t.id)
 
 
 def check_licencas(pre_atribuidas):
@@ -763,7 +763,7 @@ def check_licencas(pre_atribuidas):
                 "\tProfessor %s com disciplina %s pre-atribuida e "
                 + "com licenca.\n\t\tLicenca SEMESTRE 1 removida.",
                 p.nome(),
-                t.id(),
+                t.id,
             )
             p.licenca1 = False
 
@@ -772,7 +772,7 @@ def check_licencas(pre_atribuidas):
                 "\tProfessor %s com disciplina %s pre-atribuida e "
                 + "com licenca.\n\t\tLicenca SEMESTRE 2 removida.",
                 p.nome(),
-                t.id(),
+                t.id,
             )
             p.licenca2 = False
 
@@ -788,7 +788,7 @@ def check_inaptidao(pre_atribuidas):
                 + "Inaptidao removida.",
                 p.nome(),
                 t.grupo.id,
-                t.id(),
+                t.id,
             )
 
             p.inapto.remove(t.grupo.id)
