@@ -17,6 +17,9 @@ from .modelos import ProfessorORM, TurmaORM
 class RepositorioTurmas(Protocol):
     def buscar_por_id(self, id: str) -> Turma | None: ...
     def salvar(self, turma: Turma) -> None: ...
+    def listar(
+        self, *, semestralidade: int | None = None, com_professor: bool | None = None
+    ) -> list[Turma]: ...
 
 
 class RepositorioTurmasSQL(RepositorioTurmas):
@@ -31,16 +34,48 @@ class RepositorioTurmasSQL(RepositorioTurmas):
         orm = turma_para_orm(turma)
         self._session.merge(orm)
 
+    def listar(
+        self, *, semestralidade: int | None = None, com_professor: bool | None = None
+    ) -> list[Turma]:
+        stmt = select(TurmaORM)
+
+        if semestralidade is not None:
+            stmt = stmt.where(TurmaORM.semestralidade == semestralidade)
+
+        if com_professor is True:
+            stmt = stmt.where(TurmaORM.professor_matricula.is_not(None))
+        elif com_professor is False:
+            stmt = stmt.where(TurmaORM.professor_matricula.is_(None))
+
+        orms = self._session.scalars(stmt).all()
+        return [turma_para_dominio(orm) for orm in orms]
+
 
 class RepositorioTurmasMemoria(RepositorioTurmas):
     def __init__(self):
         self._dados: dict[str, Turma] = {}
 
     def buscar_por_id(self, id: str) -> Turma | None:
-        return self._dados.get(id)
+        t = self._dados.get(id)
+        return deepcopy(t) if t is not None else None
 
     def salvar(self, turma: Turma) -> None:
         self._dados[turma.id] = turma
+
+    def listar(
+        self, *, semestralidade: int | None = None, com_professor: bool | None = None
+    ) -> list[Turma]:
+        resultado = list(self._dados.values())
+
+        if semestralidade is not None:
+            resultado = [t for t in resultado if t.semestralidade == semestralidade]
+
+        if com_professor is True:
+            resultado = [t for t in resultado if t.professor is not None]
+        elif com_professor is False:
+            resultado = [t for t in resultado if t.professor is None]
+
+        return [deepcopy(t) for t in resultado]
 
 
 class RepositorioProfessores(Protocol):
