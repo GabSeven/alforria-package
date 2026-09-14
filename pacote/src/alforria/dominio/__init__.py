@@ -1,0 +1,1 @@
+"""Classes puras do domínio (Professor, Turma, Grupo), sem persistência."""
