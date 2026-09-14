@@ -12,7 +12,7 @@ class RegistroOperacao:
         self,
         tipo: TipoOperacao,
         turma_id: str,
-        professor_matricula: str | None,
+        professor_matricula: str | None = None,
         professor_anterior_matricula: str | None = None,
     ):
         self.tipo = tipo
