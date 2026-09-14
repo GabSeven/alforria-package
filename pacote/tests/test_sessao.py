@@ -1,13 +1,11 @@
 from alforria import Professor, Turma
 from alforria.db.repositorios import RepositorioProfessores, RepositorioTurmas
-from alforria.excecoes import (
-    ProfessorInexistenteError,
-    TurmaInexistenteError,
+from alforria.operacoes import (
     TurmaJaAtribuidaError,
     TurmaSemProfessorError,
+    atribuir_turma,
 )
-from alforria.operacoes import atribuir_turma
-from alforria.sessao import Sessao
+from alforria.sessao import ProfessorInexistenteError, Sessao, TurmaInexistenteError
 from pytest import raises
 
 

@@ -1,6 +1,11 @@
 from alforria import Professor, Turma
-from alforria.excecoes import TurmaJaAtribuidaError, TurmaSemProfessorError
-from alforria.operacoes import atribuir_turma, mover_turma, remover_turma
+from alforria.operacoes import (
+    TurmaJaAtribuidaError,
+    TurmaSemProfessorError,
+    atribuir_turma,
+    mover_turma,
+    remover_turma,
+)
 from pytest import raises
 
 

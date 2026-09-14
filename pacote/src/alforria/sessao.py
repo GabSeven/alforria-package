@@ -1,12 +1,19 @@
-# import operacoes
-
-# from .classes import Turma, Professor
 from .db.repositorios import RepositorioProfessores, RepositorioTurmas
 from .dominio.professor import Professor
 from .dominio.turma import Turma
-from .excecoes import ProfessorInexistenteError, TurmaInexistenteError
+from .excecoes import AlforriaError
 from .historico import HistoricoAlteracoes, RegistroOperacao, TipoOperacao
 from .operacoes import atribuir_turma, mover_turma, remover_turma
+
+
+class TurmaInexistenteError(AlforriaError):
+    def __init__(self, turma_id: str):
+        super().__init__(f"Turma {turma_id} não encontrada.")
+
+
+class ProfessorInexistenteError(AlforriaError):
+    def __init__(self, matricula: str):
+        super().__init__(f"Professor {matricula} não encontrado.")
 
 
 class Sessao:
