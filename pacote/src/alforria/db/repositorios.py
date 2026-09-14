@@ -87,7 +87,6 @@ class RepositorioTurmasMemoria(RepositorioTurmas):
 
 class RepositorioProfessores(Protocol):
     def buscar_por_matricula(self, matricula: str) -> Professor | None: ...
-    def buscar_por_nome(self, nome: str) -> Professor | None: ...
     def salvar(self, professor: Professor) -> None: ...
     def listar(self, temporario: bool | None = None) -> list[Professor]: ...
 
@@ -99,9 +98,6 @@ class RepositorioProfessoresSQL(RepositorioProfessores):
     def buscar_por_matricula(self, matricula: str) -> Professor | None:
         orm = self._session.get(ProfessorORM, matricula)
         return professor_para_dominio(orm) if orm is not None else None
-
-    def buscar_por_nome(self, nome: str) -> Professor | None:
-        pass
 
     def salvar(self, professor: Professor) -> None:
         orm = professor_para_orm(professor)
@@ -131,9 +127,6 @@ class RepositorioProfessoresMemoria(RepositorioProfessores):
         mapa = self._indice_turmas_por_matricula()
         p.turmas_a_lecionar = [deepcopy(t) for t in mapa.get(matricula, [])]
         return p
-
-    def buscar_por_nome(self, nome: str) -> Professor | None:
-        pass
 
     def salvar(self, professor: Professor):
         self._dados[professor.matricula] = deepcopy(professor)
