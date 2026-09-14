@@ -1,5 +1,5 @@
 from alforria import Professor, Turma
-from alforria.db.repositorios import RepositorioTurmas
+from alforria.db.repositorios import RepositorioProfessores, RepositorioTurmas
 
 
 def test_salvar_e_buscar_por_id(repo_turmas: RepositorioTurmas):
@@ -92,12 +92,15 @@ def test_listar_filtra_por_semestralidade(repo_turmas: RepositorioTurmas):
     assert any(t.id == "ALG101_2_2" for t in semestralidade2)
 
 
-def test_listar_filtra_turmas_sem_professor(repo_turmas: RepositorioTurmas):
+def test_listar_filtra_turmas_sem_professor(
+    repo_turmas: RepositorioTurmas, repo_professores: RepositorioProfessores
+):
     t1 = Turma(nome="Cálculo", codigo_disc="MAT101", numero_turma=1, semestralidade=1)
     t2 = Turma(nome="Física", codigo_disc="FIS101", numero_turma=1, semestralidade=2)
     t3 = Turma(nome="Álgebra", codigo_disc="ALG101", numero_turma=2, semestralidade=2)
 
     p = Professor(matricula="p1", nome_completo="Professor 1")
+    repo_professores.salvar(p)
     t1.add_professor(p)
 
     repo_turmas.salvar(t1)
@@ -111,12 +114,15 @@ def test_listar_filtra_turmas_sem_professor(repo_turmas: RepositorioTurmas):
     assert any(t.id == "ALG101_2_2" for t in turmas_sem_professor)
 
 
-def test_listar_filtra_turmas_com_professor(repo_turmas: RepositorioTurmas):
+def test_listar_filtra_turmas_com_professor(
+    repo_turmas: RepositorioTurmas, repo_professores: RepositorioProfessores
+):
     t1 = Turma(nome="Cálculo", codigo_disc="MAT101", numero_turma=1, semestralidade=1)
     t2 = Turma(nome="Física", codigo_disc="FIS101", numero_turma=1, semestralidade=2)
     t3 = Turma(nome="Álgebra", codigo_disc="ALG101", numero_turma=2, semestralidade=2)
 
     p = Professor(matricula="p1", nome_completo="Professor 1")
+    repo_professores.salvar(p)
     t1.add_professor(p)
 
     repo_turmas.salvar(t1)
