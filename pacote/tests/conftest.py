@@ -1,6 +1,7 @@
 import pytest
 from alforria.db.modelos import Base
 from alforria.db.repositorios import (
+    BancoMemoria,
     RepositorioProfessoresMemoria,
     RepositorioProfessoresSQL,
     RepositorioTurmasMemoria,
@@ -26,14 +27,19 @@ def modo(request):
 
 
 @pytest.fixture
-def repo_professores(modo, session):
-    if modo == "sql":
-        return RepositorioProfessoresSQL(session)
-    return RepositorioProfessoresMemoria()
+def banco():
+    return BancoMemoria()
 
 
 @pytest.fixture
-def repo_turmas(modo, session):
+def repo_professores(modo, session, banco):
+    if modo == "sql":
+        return RepositorioProfessoresSQL(session)
+    return RepositorioProfessoresMemoria(banco)
+
+
+@pytest.fixture
+def repo_turmas(modo, session, banco):
     if modo == "sql":
         return RepositorioTurmasSQL(session)
-    return RepositorioTurmasMemoria()
+    return RepositorioTurmasMemoria(banco)

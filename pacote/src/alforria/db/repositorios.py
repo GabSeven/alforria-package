@@ -14,6 +14,12 @@ from .conversao import (
 from .modelos import ProfessorORM, TurmaORM
 
 
+class BancoMemoria:
+    def __init__(self):
+        self.professores: dict[str, Professor] = {}
+        self.turmas: dict[str, Turma] = {}
+
+
 class RepositorioTurmas(Protocol):
     def buscar_por_id(self, id: str) -> Turma | None: ...
     def salvar(self, turma: Turma) -> None: ...
@@ -52,15 +58,16 @@ class RepositorioTurmasSQL(RepositorioTurmas):
 
 
 class RepositorioTurmasMemoria(RepositorioTurmas):
-    def __init__(self):
-        self._dados: dict[str, Turma] = {}
+    def __init__(self, banco: BancoMemoria | None = None):
+        self._banco = banco or BancoMemoria()
+        self._dados = self._banco.turmas
 
     def buscar_por_id(self, id: str) -> Turma | None:
         t = self._dados.get(id)
         return deepcopy(t) if t is not None else None
 
     def salvar(self, turma: Turma) -> None:
-        self._dados[turma.id] = turma
+        self._dados[turma.id] = deepcopy(turma)
 
     def listar(
         self, *, semestralidade: int | None = None, com_professor: bool | None = None
@@ -111,18 +118,25 @@ class RepositorioProfessoresSQL(RepositorioProfessores):
 
 
 class RepositorioProfessoresMemoria(RepositorioProfessores):
-    def __init__(self):
-        self._dados: dict[str, Professor] = {}
+    def __init__(self, banco: BancoMemoria | None = None):
+        self._banco = banco or BancoMemoria()
+        self._dados = self._banco.professores
 
     def buscar_por_matricula(self, matricula: str) -> Professor | None:
         p = self._dados.get(matricula, None)
-        return deepcopy(p) if p is not None else None
+        if p is None:
+            return None
+
+        p = deepcopy(p)
+        mapa = self._indice_turmas_por_matricula()
+        p.turmas_a_lecionar = [deepcopy(t) for t in mapa.get(matricula, [])]
+        return p
 
     def buscar_por_nome(self, nome: str) -> Professor | None:
         pass
 
     def salvar(self, professor: Professor):
-        self._dados[professor.matricula] = professor
+        self._dados[professor.matricula] = deepcopy(professor)
 
     def listar(self, temporario: bool | None = None) -> list[Professor]:
         resultado = list(self._dados.values())
@@ -130,4 +144,24 @@ class RepositorioProfessoresMemoria(RepositorioProfessores):
         if temporario is not None:
             resultado = [p for p in resultado if p.temporario == temporario]
 
-        return [deepcopy(p) for p in resultado]
+        resultado = [deepcopy(p) for p in resultado]
+
+        mapa = self._indice_turmas_por_matricula()
+
+        for p in resultado:
+            p.turmas_a_lecionar = mapa.get(p.matricula, [])
+        return resultado
+
+    def _turmas_de(self, matricula: str) -> list[Turma]:
+        return [
+            deepcopy(t)
+            for t in self._banco.turmas.values()
+            if t.professor is not None and t.professor.matricula == matricula
+        ]
+
+    def _indice_turmas_por_matricula(self) -> dict[str, list[Turma]]:
+        mapa: dict[str, list[Turma]] = {}
+        for t in self._banco.turmas.values():
+            if t.professor is not None:
+                mapa.setdefault(t.professor.matricula, []).append(t)
+        return mapa
